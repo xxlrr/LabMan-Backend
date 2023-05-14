@@ -10,7 +10,7 @@ user = Blueprint('user', __name__)
 auth = Blueprint('auth', __name__)
 
 
-def require_role(role):
+def identityPermissions(role):
     def decorator(func):
         @wraps(func)
         def innerLayer(*args, **kwargs):
@@ -32,8 +32,8 @@ def require_role(role):
     return decorator
 
 @user.route("/api/equipment/list", methods=["GET"])
-@require_role("User")
-@require_role("Manager")
+@identityPermissions("User")
+@identityPermissions("Manager")
 def get_equipment_list():
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("pageSize", 10, type=int)
@@ -72,8 +72,8 @@ def get_equipment_list():
     })
 
 @user.route("/api/equipment/<int:equipment_id>", methods=["GET"])
-@require_role("User")
-@require_role("Manager")
+@identityPermissions("User")
+@identityPermissions("Manager")
 def get_equipment(equipment_id):
     equipment = Equipment.query.get(equipment_id)
     if not equipment:
@@ -89,7 +89,7 @@ def get_equipment(equipment_id):
     })
 
 @auth.route("/api/equipment/delete/<int:equipment_id>", methods=["DELETE"])
-@require_role("Manager")
+@identityPermissions("Manager")
 def delete_equipment(equipment_id):
     equipment = Equipment.query.get(equipment_id)
     if not equipment:
