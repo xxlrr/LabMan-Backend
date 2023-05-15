@@ -3,15 +3,9 @@ from apis.auth import get_current_user, authorize
 
 user = Blueprint('user', __name__)
 
+
 @user.route("/api/user/profile/", methods=["GET"])
-@authorize
+@authorize()
 def get_user_profile():
     user = get_current_user()
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "role": user.role,
-        "firstname": user.firstname,
-        "lastname": user.lastname
-    })
+    return jsonify(user)
