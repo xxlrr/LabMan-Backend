@@ -9,6 +9,6 @@ class Equip(db.Model):
     category: str = db.Column(db.String(255), nullable=False)
     stock: int = db.Column(db.Integer, nullable=False)
     description: str = db.Column(db.String(255))
-    state: str = db.Column(db.Enum("available", "unavailable"), nullable=False)
+    state: str = db.Column(db.Enum("available", "unavailable"), nullable=False, default="available")
     photo: str = db.Column(db.Text)
     
