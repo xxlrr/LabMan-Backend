@@ -1,9 +1,11 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from models import db
 from models.init_db import init_db
 from apis.auth import auth
 from apis.user import user
+from apis.equip import equip
 
 if __name__ == "__main__":
     Labman = Flask(__name__)
@@ -18,6 +20,7 @@ if __name__ == "__main__":
     # register your blueprints here
     Labman.register_blueprint(auth)
     Labman.register_blueprint(user)
+    Labman.register_blueprint(equip)
 
     # Cross-origin resource sharing
     CORS(Labman)
