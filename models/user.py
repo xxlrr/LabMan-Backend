@@ -9,4 +9,5 @@ class User(db.Model):
     password: str = db.Column(db.String(255), nullable=False)
     role: str = db.Column(db.Enum("User", "Manager"), nullable=False)
     firstname: str = db.Column(db.String(255))
-    lastname: str = db.Column(db.String(255))    
+    lastname: str = db.Column(db.String(255))
+    borrow = db.relationship("Borrow", backref="user")

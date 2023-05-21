@@ -10,5 +10,7 @@ class Equip(db.Model):
     stock: int = db.Column(db.Integer, nullable=False)
     description: str = db.Column(db.String(255))
     state: str = db.Column(db.Enum("available", "unavailable"), nullable=False, default="available")
+    # todo: alter the photo column to url after implement the upload picture api
+    #  (have already implemented, not commit yet)
     photo: str = db.Column(db.Text)
-    
+    borrow = db.relationship("Borrow", backref="equip")
