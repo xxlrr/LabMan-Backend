@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from apis.auth import authorize
 from models.borrow import Borrow
+from models.equip import Equip
 from models import db
 
 borrow = Blueprint('borrow', __name__)
@@ -16,9 +17,9 @@ def get_borrows():
 
     query = Borrow.query
     if equip_name:
-        query = query.filter(Borrow.equip.name.like(f"%{equip_name}%"))
+        query = query.join(Borrow.user).filter(Equip.name.like(f"%{equip_name}%"))
     if borrower:
-        query = query.filter(Borrow.user.username == borrower)
+        query = query.filter(Borrow.user.has(username=borrower))
     if state:
         query = query.filter(Borrow.state == state)
 

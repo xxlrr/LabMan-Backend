@@ -1,5 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
+from sqlalchemy import func, case
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from . import db
@@ -16,7 +17,7 @@ class Borrow(db.Model):
     equip_id = db.Column(db.Integer, db.ForeignKey('equip.id'))
     start_time: datetime = db.Column(db.DateTime, nullable=False)
     duration: int = db.Column(db.Integer, nullable=False)
-    return_time: datetime = db.Column(db.DateTime, nullable=False)
+    return_time: datetime = db.Column(db.DateTime, nullable=True)
     user: User = field(init=False)
     equip: Equip = field(init=False)
 
@@ -35,6 +36,19 @@ class Borrow(db.Model):
             # not returned
             return "MISSING" if (datetime.now() - self.start_time).days > self.duration else "BORROWING"
     
+    @state.expression
+    def state(cls):
+        return case(
+            (cls.return_time != None, case(
+                (func.julianday(cls.return_time) - func.julianday(cls.start_time) > cls.duration, "LATE"),
+                else_="RETURNED"
+            )),
+            else_=case(
+                (func.julianday('now') - func.julianday(cls.start_time) > cls.duration, "MISSING"),
+                else_="BORROWING"
+            ),            
+        )
+    
     @hybrid_property
     def remind(self) -> bool:
         """ return whether the user needs to be alerted.
@@ -42,3 +56,7 @@ class Borrow(db.Model):
         otherwise, return flase.
         """
         return (datetime.now() - self.start_time).days > self.duration - 3
+    
+    @remind.expression
+    def remind(cls):
+        return func.julianday('now') - func.julianday(cls.start_time) > cls.duration - 3
