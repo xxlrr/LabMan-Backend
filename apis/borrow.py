@@ -9,8 +9,8 @@ borrow = Blueprint('borrow', __name__)
 
 @borrow.route("/api/borrow/", methods=["GET"])
 def get_borrows():
-    page = request.args.get("page", 1, type=int)
-    page_size = request.args.get("pageSize", 10, type=int)
+    page = request.args.get("current", None, type=int)
+    page_size = request.args.get("pageSize", None, type=int)
     equip_name = request.args.get("equip_name", "")
     borrower = request.args.get("borrower", "")
     state = request.args.get("state", "")
