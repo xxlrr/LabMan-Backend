@@ -44,7 +44,12 @@ def get_equip(id):
 @authorize(["Manager"])
 def add_equip():
     borrow = Borrow(**request.json)
+    equip = Equip.query.get(borrow.equip_id)
+    if equip.stock <= 0:
+        return jsonify({"message": "Understock"}), 500 
     db.session.add(borrow)
+    equip = Equip.query.get(borrow.equip_id)
+    equip.stock -= 1
     db.session.commit()
     return {}, 200
 
