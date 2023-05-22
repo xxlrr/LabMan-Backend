@@ -15,7 +15,7 @@ class Borrow(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     equip_id = db.Column(db.Integer, db.ForeignKey('equip.id'))
-    borrow_time: datetime = db.Column(db.DateTime, nullable=False)
+    borrow_time: datetime = db.Column(db.DateTime, nullable=False, default=datetime.now())
     duration: int = db.Column(db.Integer, nullable=False)
     return_time: datetime = db.Column(db.DateTime, nullable=True)
     user: User = field(init=False)
