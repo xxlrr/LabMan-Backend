@@ -36,20 +36,19 @@ def get_borrows():
 
 @borrow.route("/api/borrow/<int:id>/", methods=["GET"])
 @authorize(["Manager"])
-def get_equip(id):
+def get_borrow(id):
     borrow = Borrow.query.get(id)
     return jsonify(borrow), 200
 
 
 @borrow.route("/api/borrow/", methods=["POST"])
 @authorize(["Manager"])
-def add_equip():
+def add_borrow():
     borrow = Borrow(**request.json)
     equip = Equip.query.get(borrow.equip_id)
     if equip.stock <= 0:
         return jsonify({"message": "Understock"}), 500 
     db.session.add(borrow)
-    equip = Equip.query.get(borrow.equip_id)
     equip.stock -= 1
     db.session.commit()
     return {}, 200
@@ -57,7 +56,7 @@ def add_equip():
 
 @borrow.route("/api/borrow/<int:id>/", methods=["PUT"])
 @authorize(["Manager"])
-def mod_equip(id):
+def mod_borrow(id):
     fields = request.json
 
     borrow_time = fields.pop('borrow_time')
@@ -78,7 +77,18 @@ def mod_equip(id):
 
 @borrow.route("/api/borrow/<int:id>/", methods=["DELETE"])
 @authorize(["Manager"])
-def del_equip(id):
+def del_borrow(id):
     Borrow.query.filter_by(id=id).delete()
+    db.session.commit()
+    return {}, 200
+
+
+@borrow.route("/api/borrow/<int:id>/back/", methods=["PUT"])
+@authorize(["Manager"])
+def back_equip(id):
+    borrow = Borrow.query.get(id)
+    if borrow.return_time:
+        return {"message": "The equipment has already been returned"}, 500
+    borrow.return_time = datetime.now()
     db.session.commit()
     return {}, 200

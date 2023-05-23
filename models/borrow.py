@@ -35,7 +35,7 @@ class Borrow(db.Model):
         else:
             # not returned
             return "MISSING" if (datetime.now() - self.borrow_time).days > self.duration else "BORROWING"
-    
+
     @state.expression
     def state(cls):
         return case(
