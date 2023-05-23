@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from apis.auth import authorize
 from models.borrow import Borrow
@@ -57,7 +58,21 @@ def add_equip():
 @borrow.route("/api/borrow/<int:id>/", methods=["PUT"])
 @authorize(["Manager"])
 def mod_equip(id):
-    Borrow.query.filter_by(id=id).update(request.json)
+    fields = request.json
+
+    borrow_time = fields.pop('borrow_time')
+    return_time = fields.pop('return_time', None)
+    fields['borrow_time'] = datetime.fromisoformat(borrow_time)
+    if return_time:
+        fields['return_time'] = datetime.fromisoformat(return_time)
+
+    borrow = Borrow.query.get(id)
+    if not borrow.return_time and return_time:
+        borrow.equip.stock -= 1
+    elif borrow.return_time and not return_time:
+        borrow.equip.stock += 1
+
+    Borrow.query.filter_by(id=borrow.id).update(fields)
     db.session.commit()
     return {}, 200
 
