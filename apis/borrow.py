@@ -63,8 +63,7 @@ def mod_equip(id):
     borrow_time = fields.pop('borrow_time')
     return_time = fields.pop('return_time', None)
     fields['borrow_time'] = datetime.fromisoformat(borrow_time)
-    if return_time:
-        fields['return_time'] = datetime.fromisoformat(return_time)
+    fields['return_time'] = return_time and datetime.fromisoformat(return_time)
 
     borrow = Borrow.query.get(id)
     if not borrow.return_time and return_time:
