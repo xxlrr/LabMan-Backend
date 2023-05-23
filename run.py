@@ -6,6 +6,7 @@ from models.init_db import init_db
 from apis.auth import auth
 from apis.user import user
 from apis.equip import equip
+from apis.borrow import borrow
 
 if __name__ == "__main__":
     Labman = Flask(__name__)
@@ -21,6 +22,7 @@ if __name__ == "__main__":
     Labman.register_blueprint(auth)
     Labman.register_blueprint(user)
     Labman.register_blueprint(equip)
+    Labman.register_blueprint(borrow)
 
     # Cross-origin resource sharing
     CORS(Labman)
