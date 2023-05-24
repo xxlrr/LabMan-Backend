@@ -46,8 +46,8 @@ def get_borrow(id):
 def add_borrow():
     borrow = Borrow(**request.json)
     equip = Equip.query.get(borrow.equip_id)
-    if equip.stock <= 0:
-        return jsonify({"message": "Understock"}), 500 
+    if equip.stock <= 0 or equip.state=="unavailable":
+        return jsonify({"message": "the equipment is not available"}), 500 
     db.session.add(borrow)
     equip.stock -= 1
     db.session.commit()
