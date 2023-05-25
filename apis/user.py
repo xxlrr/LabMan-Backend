@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from apis.auth import get_current_user, authorize
+from apis.auth import get_current_user_id, authorize
 from models.user import User
 from models import db
 
@@ -10,12 +10,13 @@ user = Blueprint('user', __name__)
 @user.route("/api/user/profile/", methods=["GET"])
 @authorize()
 def get_user_profile():
-    user = get_current_user()
+    user_id = get_current_user_id()
+    user = User.query.get(user_id)
     return jsonify(user)
 
 
 @user.route("/api/users/", methods=["GET"])
-@authorize()
+@authorize(["Manager"])
 def get_Users():
     page = request.args.get("current", None, type=int)
     page_size = request.args.get("pageSize", None, type=int)

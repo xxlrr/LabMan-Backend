@@ -1,14 +1,16 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from apis.auth import authorize
+from apis.auth import authorize, get_current_user_id
 from models.borrow import Borrow
 from models.equip import Equip
+from models.user import User
 from models import db
 
 borrow = Blueprint('borrow', __name__)
 
 
 @borrow.route("/api/borrow/", methods=["GET"])
+@authorize()
 def get_borrows():
     page = request.args.get("current", None, type=int)
     page_size = request.args.get("pageSize", None, type=int)
@@ -16,9 +18,14 @@ def get_borrows():
     borrower = request.args.get("borrower", "")
     state = request.args.get("state", "")
 
+    user_id = get_current_user_id();
+    user = User.query.get(user_id)
+
     query = Borrow.query
+    if (user.role == "User"):
+        query = query.filter(Borrow.user_id == user_id)
     if equip_name:
-        query = query.join(Borrow.user).filter(Equip.name.like(f"%{equip_name}%"))
+        query = query.filter(Equip.name.like(f"%{equip_name}%"))
     if borrower:
         query = query.filter(Borrow.user.has(username=borrower))
     if state:
@@ -97,12 +104,14 @@ def back_equip(id):
 @borrow.route("/api/borrow/reminder/count/", methods=["GET"])
 @authorize()
 def get_reminder_count():
-  reminders = Borrow.query.filter_by(remind=True)
+  user_id = get_current_user_id()
+  reminders = Borrow.query.filter_by(user_id=user_id, remind=True)
   return {"count": reminders.count()}, 200
 
 
 @borrow.route("/api/borrow/reminder/", methods=["GET"])
 @authorize()
 def get_reminders():
-    reminders = Borrow.query.filter_by(remind=True).all()
+    user_id = get_current_user_id()
+    reminders = Borrow.query.filter_by(user_id=user_id, remind=True).all()
     return reminders, 200

@@ -22,14 +22,13 @@ def login():
         return jsonify({"message": "Invalid - Username/Password"}), 401
     
 
-def get_current_user():
+def get_current_user_id():
     token = request.headers.get("Authorization")
     if not token:
         return None
     payload = jwt.decode(token, Labman.config["SECRET_KEY"], algorithms=["HS256"])
     user_id = payload["user_id"]
-    user = User.query.get(user_id)
-    return user
+    return user_id
 
 
 def authorize(roles:list = None):
@@ -37,7 +36,8 @@ def authorize(roles:list = None):
         @wraps(func)
         def innerLayer(*args, **kwargs):
             try:
-                user = get_current_user()
+                user_id = get_current_user_id()
+                user = User.query.get(user_id)
                 if not user:
                     return jsonify({"message": "Unauthorized"}), 401
                 if roles and user.role not in roles:
