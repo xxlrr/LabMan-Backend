@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
-from sqlalchemy import func, case
+from sqlalchemy import func, case, and_
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from . import db
@@ -55,8 +55,11 @@ class Borrow(db.Model):
         return ture if return_time is None and current_time > borrow_time + duration - 3 (near-due)
         otherwise, return flase.
         """
-        return (datetime.now() - self.borrow_time).days > self.duration - 3
+        return not self.return_time and (datetime.now() - self.borrow_time).days > self.duration - 3
     
     @remind.expression
     def remind(cls):
-        return func.julianday('now') - func.julianday(cls.borrow_time) > cls.duration - 3
+        return and_(
+            cls.return_time == None,
+            func.julianday('now') - func.julianday(cls.borrow_time) > cls.duration - 3
+        )
