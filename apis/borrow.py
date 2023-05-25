@@ -92,3 +92,17 @@ def back_equip(id):
     borrow.return_time = datetime.now()
     db.session.commit()
     return {}, 200
+
+
+@borrow.route("/api/borrow/reminder/count/", methods=["GET"])
+@authorize()
+def get_reminder_count():
+  reminders = Borrow.query.filter_by(remind=True)
+  return {"count": reminders.count()}, 200
+
+
+@borrow.route("/api/borrow/reminder/", methods=["GET"])
+@authorize()
+def get_reminders():
+    reminders = Borrow.query.filter_by(remind=True).all()
+    return reminders, 200
