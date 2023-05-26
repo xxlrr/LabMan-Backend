@@ -12,6 +12,10 @@ borrow = Blueprint('borrow', __name__)
 @borrow.route("/api/borrow/", methods=["GET"])
 @authorize()
 def get_borrows():
+    """Get the borrow list.
+    If the current user is a manager (role is Manager), return all records
+    If the current user is a common user (role is User), return records related to themselves.
+    """
     page = request.args.get("current", None, type=int)
     page_size = request.args.get("pageSize", None, type=int)
     equip_name = request.args.get("equip_name", "")
@@ -45,6 +49,7 @@ def get_borrows():
 @borrow.route("/api/borrow/<int:id>/", methods=["GET"])
 @authorize(["Manager"])
 def get_borrow(id):
+    """Get a specified borrow record"""
     borrow = Borrow.query.get(id)
     return jsonify(borrow), 200
 
@@ -52,6 +57,9 @@ def get_borrow(id):
 @borrow.route("/api/borrow/", methods=["POST"])
 @authorize(["Manager"])
 def add_borrow():
+    """Add a borrow. If the equip staock less than 1
+    or state is unavailable, return failed (code: 500).
+    """
     borrow = Borrow(**request.json)
     equip = Equip.query.get(borrow.equip_id)
     if equip.stock <= 0 or equip.state=="unavailable":
@@ -65,6 +73,9 @@ def add_borrow():
 @borrow.route("/api/borrow/<int:id>/", methods=["PUT"])
 @authorize(["Manager"])
 def mod_borrow(id):
+    """Mod a borrow record. You must specify all parameters (including unmodified)
+    In this function, the equipment stock will be adjusted automatically.
+    """
     fields = request.json
 
     borrow_time = fields.pop('borrow_time')
@@ -86,6 +97,9 @@ def mod_borrow(id):
 @borrow.route("/api/borrow/<int:id>/", methods=["DELETE"])
 @authorize(["Manager"])
 def del_borrow(id):
+    """Delete a borrow record. If the borrowed equipment is not returned,
+    the equipment stock will be +1 when the record is deleting.
+    """
     borrow = Borrow.query.get(id)
     if not borrow.return_time:
         borrow.equip.stock += 1
@@ -97,10 +111,11 @@ def del_borrow(id):
 @borrow.route("/api/borrow/<int:id>/back/", methods=["PUT"])
 @authorize(["Manager"])
 def back_equip(id):
+    """Return the equipment. the return_time will be now."""
     borrow = Borrow.query.get(id)
     if borrow.return_time:
         return {"message": "The equipment has already been returned"}, 500
-    borrow.return_time = datetime.now()
+    borrow.return_time = datetime.utcnow()
     db.session.commit()
     return {}, 200
 
@@ -108,6 +123,7 @@ def back_equip(id):
 @borrow.route("/api/borrow/reminder/count/", methods=["GET"])
 @authorize()
 def get_reminder_count():
+  """Get the number of reminders for the current user."""
   user_id = get_current_user_id()
   reminders = Borrow.query.filter_by(user_id=user_id, remind=True)
   return {"count": reminders.count()}, 200
@@ -116,6 +132,7 @@ def get_reminder_count():
 @borrow.route("/api/borrow/reminder/", methods=["GET"])
 @authorize()
 def get_reminders():
+    """Get the reminders for the current user."""
     user_id = get_current_user_id()
     reminders = Borrow.query.filter_by(user_id=user_id, remind=True).all()
     return reminders, 200

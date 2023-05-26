@@ -1,5 +1,5 @@
 import jwt
-import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from flask import Blueprint, request, jsonify
 from flask import current_app as Labman
@@ -16,13 +16,19 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and user.password == password:
-        token = jwt.encode({"user_id": user.id, "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24*7)}, Labman.config["SECRET_KEY"])
+        token = jwt.encode({
+                "user_id": user.id,
+                "exp": datetime.utcnow() + timedelta(hours=24*7)
+            }, Labman.config["SECRET_KEY"])
         return jsonify({"role": user.role, "token": token})
     else:
         return jsonify({"message": "Invalid - Username/Password"}), 401
     
 
 def get_current_user_id():
+    """Get the id of the current logged in.
+    Return None if the user is not log in.
+    """
     token = request.headers.get("Authorization")
     if not token:
         return None
@@ -32,6 +38,10 @@ def get_current_user_id():
 
 
 def authorize(roles:list = None):
+    """An authentication decorator that checks whether the currently user
+    iss is in permitted roles (specified by parameter A). If the roles is None,
+    only check whether is logged in.
+    """
     def decorator(func):
         @wraps(func)
         def innerLayer(*args, **kwargs):

@@ -3,6 +3,7 @@ from . import db
 
 @dataclass
 class User(db.Model):
+    """User model is used to save all user info."""
     id: int = db.Column(db.Integer, primary_key=True)
     username: str = db.Column(db.String(255), unique=True, nullable=False)
     email: str = db.Column(db.String(255), unique=True)

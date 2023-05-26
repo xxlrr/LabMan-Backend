@@ -9,6 +9,7 @@ equip = Blueprint('equip', __name__)
 @equip.route("/api/equipment/", methods=["GET"])
 @authorize()
 def get_equips():
+    """Get the equipment list that meet the requirements"""
     page = request.args.get("current", None, type=int)
     page_size = request.args.get("pageSize", None, type=int)
     name = request.args.get("name", "")
@@ -37,6 +38,7 @@ def get_equips():
 @equip.route("/api/equipment/<int:id>/", methods=["GET"])
 @authorize()
 def get_equip(id):
+    """Get the specified equipment"""
     equip = Equip.query.get(id)
     return jsonify(equip), 200
 
@@ -44,6 +46,7 @@ def get_equip(id):
 @equip.route("/api/equipment/", methods=["POST"])
 @authorize(["Manager"])
 def add_equip():
+    """Add equipment"""
     equip = Equip(**request.json)
     db.session.add(equip)
     db.session.commit()
@@ -53,6 +56,7 @@ def add_equip():
 @equip.route("/api/equipment/<int:id>/", methods=["PUT"])
 @authorize(["Manager"])
 def mod_equip(id):
+    """Modify equipment. You must provide all parameters"""
     Equip.query.filter_by(id=id).update(request.json)
     db.session.commit()
     return {}, 200
@@ -61,6 +65,7 @@ def mod_equip(id):
 @equip.route("/api/equipment/<int:id>/", methods=["DELETE"])
 @authorize(["Manager"])
 def del_equip(id):
+    """Delete equipment"""
     Equip.query.filter_by(id=id).delete()
     db.session.commit()
     return {}, 200

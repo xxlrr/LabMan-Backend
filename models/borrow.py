@@ -10,6 +10,7 @@ from .equip import Equip
 
 @dataclass
 class Borrow(db.Model):
+    """Borrow model is used to record all borrow records."""
     state: str
     remind: bool
     id: int = db.Column(db.Integer, primary_key=True)
@@ -54,6 +55,7 @@ class Borrow(db.Model):
         """ return whether the user needs to be alerted.
         return ture if return_time is None and current_time > borrow_time + duration - 3 (near-due)
         otherwise, return flase.
+        Todo: The reminder date is best controlled by a variable (near-due), which is set directly to constant 3
         """
         return not self.return_time and (datetime.utcnow() - self.borrow_time).days > self.duration - 3
     

@@ -4,6 +4,7 @@ from . import db
 
 @dataclass
 class Equip(db.Model):
+    """Equip model is used to save all equipment"""
     id: int = db.Column(db.Integer, primary_key=True)
     name: str = db.Column(db.String(255), nullable=False)
     category: str = db.Column(db.String(255), nullable=False)
