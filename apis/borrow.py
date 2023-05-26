@@ -30,6 +30,7 @@ def get_borrows():
         query = query.filter(Borrow.user.has(username=borrower))
     if state:
         query = query.filter(Borrow.state == state)
+    query = query.order_by(Borrow.id.desc())
 
     paginated = query.paginate(page=page, per_page=page_size, error_out=False)
     total = paginated.total
@@ -85,7 +86,10 @@ def mod_borrow(id):
 @borrow.route("/api/borrow/<int:id>/", methods=["DELETE"])
 @authorize(["Manager"])
 def del_borrow(id):
-    Borrow.query.filter_by(id=id).delete()
+    borrow = Borrow.query.get(id)
+    if not borrow.return_time:
+        borrow.equip.stock += 1
+    db.session.delete(borrow)
     db.session.commit()
     return {}, 200
 

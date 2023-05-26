@@ -25,6 +25,7 @@ def get_Users():
     query = User.query
     if username:
         query = query.filter(User.username.like(f"%{username}%"))
+    query.order_by(User.id.desc())
 
     paginated_users = query.paginate(page=page, per_page=page_size, error_out=False)
     total = paginated_users.total

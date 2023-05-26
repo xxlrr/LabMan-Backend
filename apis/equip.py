@@ -22,6 +22,7 @@ def get_equips():
         query = query.filter(Equip.category == category)
     if state:
         query = query.filter(Equip.state == state)
+    query.order_by(Equip.id.desc())
 
     paginated_equipments = query.paginate(page=page, per_page=page_size, error_out=False)
     total = paginated_equipments.total
