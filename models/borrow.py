@@ -15,7 +15,7 @@ class Borrow(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     equip_id = db.Column(db.Integer, db.ForeignKey('equip.id'))
-    borrow_time: datetime = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    borrow_time: datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     duration: int = db.Column(db.Integer, nullable=False)
     return_time: datetime = db.Column(db.DateTime, nullable=True)
     user: User = field(init=False)
@@ -34,7 +34,7 @@ class Borrow(db.Model):
             return "LATE" if (self.return_time - self.borrow_time).days > self.duration else "RETURNED"
         else:
             # not returned
-            return "MISSING" if (datetime.now() - self.borrow_time).days > self.duration else "BORROWING"
+            return "MISSING" if (datetime.utcnow() - self.borrow_time).days > self.duration else "BORROWING"
 
     @state.expression
     def state(cls):
@@ -55,7 +55,7 @@ class Borrow(db.Model):
         return ture if return_time is None and current_time > borrow_time + duration - 3 (near-due)
         otherwise, return flase.
         """
-        return not self.return_time and (datetime.now() - self.borrow_time).days > self.duration - 3
+        return not self.return_time and (datetime.utcnow() - self.borrow_time).days > self.duration - 3
     
     @remind.expression
     def remind(cls):
