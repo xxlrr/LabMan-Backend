@@ -29,7 +29,7 @@ def get_borrows():
     if (user.role == "User"):
         query = query.filter(Borrow.user_id == user_id)
     if equip_name:
-        query = query.filter(Equip.name.like(f"%{equip_name}%"))
+        query = query.join(Equip).filter(Equip.name.like(f"%{equip_name}%"))
     if borrower:
         query = query.filter(Borrow.user.has(username=borrower))
     if state:
