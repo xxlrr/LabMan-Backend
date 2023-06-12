@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy.sql import text
 from apis.auth import authorize
 from models.equip import Equip
 from models import db
@@ -66,6 +67,7 @@ def mod_equip(id):
 @authorize(["Manager"])
 def del_equip(id):
     """Delete equipment"""
+    db.session.execute(text("PRAGMA foreign_keys = ON"))
     Equip.query.filter_by(id=id).delete()
     db.session.commit()
     return {}, 200

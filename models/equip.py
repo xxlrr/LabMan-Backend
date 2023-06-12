@@ -14,4 +14,4 @@ class Equip(db.Model):
     # todo: alter the photo column to url after implement the upload picture api
     #  (have already implemented, not commit yet)
     photo: str = db.Column(db.Text)
-    borrow = db.relationship("Borrow", backref="equip")
+    borrows = db.relationship("Borrow", backref="equip", passive_deletes=True)

@@ -11,4 +11,4 @@ class User(db.Model):
     role: str = db.Column(db.Enum("User", "Manager"), nullable=False)
     firstname: str = db.Column(db.String(255))
     lastname: str = db.Column(db.String(255))
-    borrow = db.relationship("Borrow", backref="user")
+    borrows = db.relationship("Borrow", backref="user", passive_deletes=True)

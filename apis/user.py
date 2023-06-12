@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from sqlalchemy.sql import text
 from apis.auth import get_current_user_id, authorize
 from models.user import User
 from models import db
@@ -69,6 +70,7 @@ def mod_user(id):
 @authorize(["Manager"])
 def del_user(id):
     """Delete a user"""
+    db.session.execute(text("PRAGMA foreign_keys = ON"))
     User.query.filter_by(id=id).delete()
     db.session.commit()
     return {}, 200

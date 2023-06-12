@@ -57,7 +57,7 @@ def get_borrow(id):
 @borrow.route("/api/borrow/", methods=["POST"])
 @authorize(["Manager"])
 def add_borrow():
-    """Add a borrow. If the equip staock less than 1
+    """Add a borrow. If the equip stock less than 1
     or state is unavailable, return failed (code: 500).
     """
     borrow = Borrow(**request.json)

@@ -39,8 +39,8 @@ def get_current_user_id():
 
 def authorize(roles:list = None):
     """An authentication decorator that checks whether the currently user
-    iss is in permitted roles (specified by parameter A). If the roles is None,
-    only check whether is logged in.
+    is in permitted roles (specified by parameter 'roles'). 
+    If the roles is None, only check whether is logged in.
     """
     def decorator(func):
         @wraps(func)
