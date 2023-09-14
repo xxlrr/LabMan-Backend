@@ -19,4 +19,11 @@ LabMan-Backend: the Back-end of Laboratory Equipment Management System
 - Visit the website  
     1. Open your chrome  
     2. Visit the website: http://127.0.0.1:5000  
-    3. Bingo, enjoy!  
+    3. Bingo, enjoy!
+
+## API Documentation
+https://apifox.com/apidoc/shared-75a1f45e-3d64-4196-9730-14f0504df3e6
+ 
+## Attention:  
+_This is a commercial research project. The purpose of public is to facilitate team communication. Others are not allowed to plagiarize or copy it for commercial use.  
+Note that this project abides by the contract and **the core algorithm is removed**._
