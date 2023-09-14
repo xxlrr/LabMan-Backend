@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve myproject
+After=nginx.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/var/www/labman/api/
+Environment="PATH=/var/www/labman/api/.venv/bin"
+ExecStart=/var/www/labman/api/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 wsgi:Labman
+
+[Install]
+WantedBy=multi-user.target
