@@ -8,7 +8,7 @@ _This is a commercial research project. The purpose of public is to facilitate t
     2. Installed pip 23.0.1 or later  
     3. Installed git  
 - Download and Install
-    1. `git clone https://github.cs.adelaide.edu.au/MCI-2023/LabMan-Backend.git`  
+    1. `git clone https://github.com/xxlrr/LabMan-Backend.git`  
     2. `cd LabMan-Backend`  
     3. `python3 -m venv .venv`  
     4. `source .venv/bin/activate`  
